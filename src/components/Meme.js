@@ -1,5 +1,5 @@
 import React from "react"
-
+import "../style.css"
 export default function Meme() {
     const [meme, setMeme] = React.useState({
         topText: "",
@@ -37,6 +37,38 @@ export default function Meme() {
             [name]: value
         }))
     }
+
+    function saveMeme() {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        const image = new Image()
+
+        image.crossOrigin = 'anonymous'
+        image.src = meme.randomImage
+
+        image.onload = () => {
+            canvas.width = image.width
+            canvas.height = image.height
+            ctx.drawImage(image, 0, 0)
+            ctx.font = '50px Impact'
+            ctx.fillStyle = 'white'
+            ctx.strokeStyle = 'black'
+            ctx.textAlign = 'center'
+
+            // Top text
+            ctx.fillText(meme.topText, canvas.width / 2, 50)
+            ctx.strokeText(meme.topText, canvas.width / 2, 50)
+
+            // Bottom text
+            ctx.fillText(meme.bottomText, canvas.width / 2, canvas.height - 20)
+            ctx.strokeText(meme.bottomText, canvas.width / 2, canvas.height - 20)
+
+            const link = document.createElement('a')
+            link.href = canvas.toDataURL('image/png')
+            link.download = 'meme.png'
+            link.click()
+        }
+    }
     
     return (
         <main>
@@ -68,6 +100,9 @@ export default function Meme() {
                 <img src={meme.randomImage} className="meme--image" />
                 <h2 className="meme--text top">{meme.topText}</h2>
                 <h2 className="meme--text bottom">{meme.bottomText}</h2>
+            </div>
+            <div className="save-button-div">
+                <button className="save-button" onClick={saveMeme}>Save Meme</button>
             </div>
         </main>
     )
