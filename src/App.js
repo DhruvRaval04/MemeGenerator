@@ -12,8 +12,8 @@ export default function App() {
                 <Header />
                 <Routes>
                     <Route path = "/" element = {<Login/>}/>
-                    <Route path = "/" element = {<Signup/>}/>
-                    <Route path = "/" element = {<Meme/>}/>
+                    <Route path = "/signup" element = {<Signup/>}/>
+                    <Route path = "/home" element = {<Meme/>}/>
                 </Routes>
             </Router>
 

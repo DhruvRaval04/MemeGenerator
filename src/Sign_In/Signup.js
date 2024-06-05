@@ -4,6 +4,7 @@ import {useNavigate, Link} from "react-router-dom"
 
 export default function Login(){
     
+    const history = useNavigate();
     const[email, setEmail] = useState('')
     const[password, setPassword] = useState('')
 
@@ -12,6 +13,22 @@ export default function Login(){
 
         try{
             await axios.post("http://localhost:3000/signup", { email, password})
+            //getting the server response 
+            .then(res=>{
+                //user has already signed in and they are making another account
+                if(res.data = "exist"){
+                    //sending alert 
+                    alert("User already exists")
+                }
+                else if (res.data = "notexist"){
+                    //redirects to home page 
+                    history("/home", {state:{id:email}})
+                }
+            })
+            .catch(e=> {
+                alert("wrong details")
+                console.log(e);
+            })
 
         }
 
@@ -39,7 +56,7 @@ export default function Login(){
             <p>OR</p>
             <br/>
 
-            <Link to="/login">Login Page</Link>
+            <Link to="/">Login Page</Link>
 
         </div>
     )
