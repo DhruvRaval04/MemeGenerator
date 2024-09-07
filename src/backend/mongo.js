@@ -24,3 +24,5 @@ const newSchema = new mongoose.Schema({
 const collection = mongoose.model("collection", newSchema)
 
 module.exports = collection
+
+//mongodb+srv://dhruvraval04:llV5QvYvpsecJPiK@serverlessinstance0.indklss.mongodb.net/?retryWrites=true&w=majority&appName=ServerlessInstance0

@@ -6,39 +6,37 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors())
 
-//connectng frontend to backend 
+//connectng frontend to backend (writing the API)
 
 //for login page
 app.get("/", cors(), (req, res) =>{
 
 })
 
-//get data from login page
-app.post("/", async(req, res) =>{
-    //taking info from axios 
-    const{email, password} = req.body
+//get data from login page (for POST) - checks if POST request's (if user exists or not)
+app.post("/", async (req, res) => {
+    const { email, password } = req.body
 
-    try{
-        //checking if email already exists 
-        //collection is our database
-        const check = await collection.findOne({email:email})
+    try {
+        const user = await collection.findOne({ email: email })
 
-        //sends a json response from server - confirmation code - "exist"
-        if (check){
-            res.json("exist")
+        if (user) {
+            // In a real application, you should use proper password hashing and comparison
+            if (user.password === password) {
+                res.json("exist")
+            } else {
+                res.json("wrongpassword")
+            }
+        } else {
+            res.json("notexist")
         }
-        else{
-            res.json("not exist")
-        }
-        
-    }
-    catch(e){
-        res.json("notexist")
-
+    } catch (error) {
+        console.error("Login error:", error)
+        res.status(500).json("error")
     }
 })
 
-//get data from signup page
+//handling POST from signup page - putting it inside the database 
 app.post("/signup", async(req, res) =>{
     //taking info from axios 
     const{email, password} = req.body
@@ -72,6 +70,6 @@ app.post("/signup", async(req, res) =>{
     }
 })
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log("port connected")
 })

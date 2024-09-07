@@ -1,6 +1,8 @@
 import React from "react"
 import "../style.css"
+import {useLocation, useNavigate} from 'react-router-dom'
 export default function Meme() {
+
     const [meme, setMeme] = React.useState({
         topText: "",
         bottomText: "",

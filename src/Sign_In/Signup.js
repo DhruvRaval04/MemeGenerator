@@ -12,15 +12,16 @@ export default function Login(){
         e.preventDefault();
 
         try{
-            await axios.post("http://localhost:3000/signup", { email, password})
+            //sending POST 
+            await axios.post("http://localhost:5000/signup", { email, password})
             //getting the server response 
             .then(res=>{
                 //user has already signed in and they are making another account
-                if(res.data = "exist"){
+                if(res.data === "exist"){
                     //sending alert 
                     alert("User already exists")
                 }
-                else if (res.data = "notexist"){
+                else if (res.data === "notexist"){
                     //redirects to home page 
                     history("/home", {state:{id:email}})
                 }
