@@ -36,6 +36,7 @@ app.post("/", async (req, res) => {
     }
 })
 
+
 //handling POST from signup page - putting it inside the database 
 app.post("/signup", async(req, res) =>{
     //taking info from axios 
@@ -69,6 +70,87 @@ app.post("/signup", async(req, res) =>{
 
     }
 })
+
+//for creating unique ids
+const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
+const AWS = require('aws-sdk');
+
+//AWS S3 backend:
+// Set the region and access keys
+AWS.config.update({
+    region: 'us-east-2',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+const s3 = new AWS.S3();
+
+// Configure multer for handling multipart/form-data
+const upload = multer({ storage: multer.memoryStorage() });
+
+app.post("/home", upload.single('file'), async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const userEmail = req.body.email;
+
+    if (!userEmail) {
+        return res.status(400).json({ error: "User email is required" });
+    }
+  
+    const uniqueKey = `${uuidv4()}.png`;
+  
+    const params = {
+      Bucket: 'memegeneratorimages',
+      Key: uniqueKey,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype
+    };
+  
+    try {
+
+      const data = await s3.upload(params).promise();
+      console.log('File uploaded successfully. File location:', data.Location);
+
+      // Generate the S3 object URL
+        const objectUrl = `https://memegeneratorimages.s3.us-east-2.amazonaws.com/${uniqueKey}`;
+
+        try{
+             
+            const updatedUser = await User.findOneAndUpdate(
+                { email: userEmail },
+                { $push: { savedmemes: objectUrl } },
+                { new: true }
+            );
+  
+            if (!updatedUser) {
+                return res.status(404).json({ error: "User not found" });
+            }
+  
+            res.json({ 
+                message: "success", 
+                location: data.Location,
+                objectUrl: objectUrl
+            });
+            console.log("updated DB")
+
+        }
+
+        catch(err) {
+            console.log("Could not update DB")
+        }
+       
+
+    } 
+    
+    catch (err) {
+      console.log('Error uploading file:', err);
+      res.status(500).json({ error: "Upload failed" });
+
+    }
+  });
 
 app.listen(5000, () => {
     console.log("port connected")

@@ -40,6 +40,10 @@ export default function Login() {
             <p>OR</p>
             <br/>
             <Link to="/signup">Signup Page</Link>
+            <br/>
+            <p>OR</p>
+            <br/>
+            <Link to="/home">Continue without signing in</Link>
         </div>
     )
 }

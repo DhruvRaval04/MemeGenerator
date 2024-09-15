@@ -58,6 +58,10 @@ export default function Login(){
             <br/>
 
             <Link to="/">Login Page</Link>
+            <br/>
+            <p>OR</p>
+            <br/>
+            <Link to="/home">Continue without signing in</Link>
 
         </div>
     )
