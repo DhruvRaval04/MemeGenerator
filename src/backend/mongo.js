@@ -20,7 +20,7 @@ const newSchema = new mongoose.Schema({
     },
     savedmemes:{
         type:Array,
-        required:false
+        default:[]
     }
 
 })

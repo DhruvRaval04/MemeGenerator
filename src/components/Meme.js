@@ -1,8 +1,12 @@
 import React from "react"
 import "../style.css"
 import {useLocation, useNavigate} from 'react-router-dom'
+import axios from 'axios'
 export default function Meme() {
     const navigate = useNavigate();
+    
+    const location = useLocation();
+    const userId = location.state?.id; 
 
     const [meme, setMeme] = React.useState({
         topText: "",
@@ -12,7 +16,7 @@ export default function Meme() {
     const [allMemes, setAllMemes] = React.useState([])
     
     function SavedMemes() {
-        navigate("/saved");
+        navigate("/saved", { state: { id: userId } });
     }
     
 
@@ -22,6 +26,11 @@ export default function Meme() {
             .then(res => res.json())
             .then(data => setAllMemes(data.data.memes))
     }, [])
+
+    function backtolandingpage(){
+        navigate("/");
+
+    }
     
     
     
@@ -77,8 +86,6 @@ export default function Meme() {
         }
     }
 
-    const location = useLocation();
-    const userId = location.state?.id; 
 
     function saveMemetocloud(){
         //make canvas into png file 
@@ -139,12 +146,32 @@ export default function Meme() {
             if (response.data.message === "success") {
                 console.log("Meme uploaded successfully to", response.data.location);
                 console.log("S3 Object URL:", response.data.objectUrl);
+                alert("Successfully uploaded meme");
             } else {
                 console.error("Meme upload failed")
             }
         } catch (error) {
-            console.error("Upload error:", error)
-            alert("An error occurred during upload. Please try again.")
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error("Server responded with error:", error.response.data);
+                if (error.response.data == "User email is required"){
+                    alert("User must log into an account")
+                }
+                else{
+                    alert("An error occurred during upload. Please try again.")
+
+                }
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error("No response received:", error.request);
+                alert("An error occurred during upload. Please try again.")
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error("Error setting up request:", error.message);
+                alert("An error occurred during upload. Please try again.")
+            }
+            
         }
     }
 
@@ -189,6 +216,9 @@ export default function Meme() {
             </div>
             <div className="saved-memes-button-div">
                 <button className="saved-memes-button" onClick={SavedMemes}>Saved Memes</button>
+            </div>
+            <div className="backtolanding-button-div">
+                <button className="backtolanding-button" onClick={backtolandingpage}>Back to Login</button>
             </div>
         </main>
     )
