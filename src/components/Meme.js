@@ -155,7 +155,7 @@ export default function Meme() {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
                 console.error("Server responded with error:", error.response.data);
-                if (error.response.data == "User email is required"){
+                if (error.response.data === "User email is required"){
                     alert("User must log into an account")
                 }
                 else{
