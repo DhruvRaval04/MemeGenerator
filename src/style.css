@@ -35,7 +35,6 @@ main {
   grid-column: 1 / -1;
   font-family: "Karla", sans-serif;
   border-radius: 5px;
-  background: linear-gradient(90.41deg, #711F8D 1.14%, #A818DA 100%);
   color: white;
   border: none;
   cursor: pointer;
@@ -96,7 +95,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 50px;
+  padding-top: 30px;
 }
 
 .save-button{
@@ -104,12 +103,8 @@ main {
   font-size: 18px; /* Increase font size for larger text */
   cursor: pointer; /* Change cursor to pointer on hover */
   border-radius: 5px;
-  background: linear-gradient(90.41deg, #711F8D 1.14%, #A818DA 100%);
   color: white;
   border: none;
   font-family: "Karla", sans-serif;
 }
 
-.save-button:hover{
-  background: #49B124;
-}

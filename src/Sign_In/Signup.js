@@ -90,13 +90,13 @@ export default function Login(){
             </div>
             <div class="flex gap-4">
               <button
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                class="inline-block bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
               >
                 Submit
               </button>
               <button
-                class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                class="inline-block bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
                 onClick={login}
               >
@@ -105,7 +105,7 @@ export default function Login(){
             </div>
           </form>
         </div>
-        <Button color="danger" variant="shadow" onClick={guest} className="font-sans text-white font-bold">
+        <Button color="danger" variant="shadow" onClick={guest} className="font-sans text-white font-bold hover:bg-success">
           Continue as Guest
         </Button>  
     

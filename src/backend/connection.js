@@ -197,7 +197,66 @@ app.get("/saved", async (req, res) => {
 
 
 });
+
+//delete saved memes 
+//will recieve meme object in req 
+app.delete("/saved/:objectKey", async (req, res) => {
+    const objectKey = req.params.objectKey;
+
+    if (!objectKey) {
+        return res.status(400).json({ error: "Object key is required" });
+      }
   
+    try {
+      // First, verify the image exists in MongoDB
+      const post = await collection.findOne({ 
+        savedmemes: objectKey 
+      });
+  
+      if (!post) {
+        console.log("Meme not found")
+        return res.status(404).json({ error: "Meme not found" });
+      }
+  
+      // Delete from S3
+      const params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: objectKey
+      };
+  
+      try{
+        
+        const s3deleteresponse = await s3.deleteObject(params).promise();
+
+        console.log("S3 Delete Response:", s3deleteresponse);
+
+      }
+      catch(s3error){
+        console.error("S3 Deletion Error:", s3Error);
+      }
+       
+      
+        
+  
+      // Remove the objectKey from the savedmemes array
+      const update = await collection.updateOne(
+        { _id: post._id },
+        { $pull: { savedmemes: objectKey } }
+      );
+  
+      if (update.modifiedCount === 0) {
+        return res.status(500).json({ error: "Failed to update MongoDB" });
+      }
+  
+      res.status(200).json({ message: "Successfully deleted meme" });
+  
+    } catch (err) {
+      console.error("Error in deletion process:", err);
+      res.status(500).json({ error: "Error during deletion process" });
+    }
+  });
+
+
 
 
 app.listen(5000, () => {
