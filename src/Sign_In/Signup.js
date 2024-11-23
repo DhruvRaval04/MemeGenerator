@@ -33,6 +33,10 @@ export default function Login(){
                     //redirects to home page 
                     history("/home", {state:{id:email}})
                 }
+                else if (res.data === "Password not strong enough"){
+                  //redirects to home page 
+                  alert("Password not strong enough")
+              }
             })
             .catch(e=> {
                 alert("wrong details")
