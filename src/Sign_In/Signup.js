@@ -2,12 +2,14 @@ import React, {useEffect, useState} from "react"
 import axios from "axios"
 import {useNavigate, Link} from "react-router-dom"
 import {Button} from "@nextui-org/react";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Login(){
     
     const history = useNavigate();
     const[email, setEmail] = useState('')
     const[password, setPassword] = useState('')
+    const {state, dispatch} = useAuthContext()
     function login() {
         history("/");
       }
@@ -23,14 +25,22 @@ export default function Login(){
             //sending POST 
             await axios.post("http://localhost:5000/signup", { email, password})
             //getting the server response 
+            
             .then(res=>{
+                console.log('Server response:', res.data) //debug log 
                 //user has already signed in and they are making another account
                 if(res.data === "exist"){
                     //sending alert 
                     alert("User already exists")
                 }
-                else if (res.data === "notexist"){
-                    //redirects to home page 
+                else if ((res.status === 200) && (res.data.email != null)){
+                  //save the user to local storage
+                  localStorage.setItem('user', JSON.stringify(res.data))  
+                  
+                  //update AuthContext 
+                  dispatch({type: 'LOGIN', payload: res.data})
+
+                  //redirects to home page 
                     history("/home", {state:{id:email}})
                 }
                 else if (res.data === "Password not strong enough"){

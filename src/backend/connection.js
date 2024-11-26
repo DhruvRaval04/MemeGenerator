@@ -11,9 +11,9 @@ app.use(cors());
 require("dotenv").config();
 
 //jsonwebtoken intialization 
-//const createToken = (_id) =>{
-  //return jwt.sign({_id}, process.env.JWT_SECRET, {expiresIn: '3d'})
-//}
+const createToken = (_id) =>{
+  return jwt.sign({_id}, process.env.JWT_SECRET, {expiresIn: '3d'})
+}
 //connectng frontend to backend (writing the API)
 
 //for login page
@@ -30,7 +30,9 @@ app.post("/", async (req, res) => {
       //using hashed password 
       const match = await bycrypt.compare(password, user.password)
       if (match) {
-        res.json("exist");
+        //create token 
+        const token  = createToken(user._id);
+        res.status(200).json({email, token});
       } else {
         res.json("wrongpassword");
       }
@@ -63,7 +65,7 @@ app.post("/signup", async (req, res) => {
       } else {
         const salt = await bycrypt.genSalt(10);
         const hash = await bycrypt.hash(password, salt);
-        res.json("notexist");
+        //res.json("notexist");
         //creating new user and saving info in database
         const data = {
           email: email,
@@ -73,11 +75,11 @@ app.post("/signup", async (req, res) => {
         //store data in mongo db if email does not exist yet
         await collection.insertMany([data]);
 
-        //const user = await collection.findOne({ email: email });
+        const user = await collection.findOne({ email: email });
 
         //create token 
-        //const token = createToken(user._id)
-        //res.status(200).json({email, token});
+        const token = createToken(user._id)
+        res.status(200).json({email, token});
       }
     } catch (e) {
       res.json("notexist");

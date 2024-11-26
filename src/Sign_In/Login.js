@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import {Button} from "@nextui-org/react";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 export default function Login() {
   const history = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {state, dispatch} = useAuthContext();
   function signup() {
     history("/signup");
   }
@@ -24,7 +26,13 @@ export default function Login() {
         password,
       });
 
-      if (response.data === "exist") {
+      if ((response.status === 200) && (response.data.email != null)) {
+         //save the user to local storage
+         localStorage.setItem('user', JSON.stringify(response.data))  
+                  
+         //update AuthContext 
+         dispatch({type: 'LOGIN', payload: response.data})
+
         history("/home", { state: { id: email } });
       } else if (response.data === "notexist") {
         alert("User does not have an account");

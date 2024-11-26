@@ -7,6 +7,7 @@ import { CiSaveDown1, CiSaveDown2 } from "react-icons/ci";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { FaSave } from "react-icons/fa";
 import Draggable from 'react-draggable';
+import {useLogout} from '../Sign_In/Logout';
 export default function Meme() {
   const navigate = useNavigate();
 
@@ -38,9 +39,17 @@ export default function Meme() {
       .then((res) => res.json())
       .then((data) => setAllMemes(data.data.memes));
   }, []);
-
+  const {logout} = useLogout()
+  
   function backtolandingpage() {
-    navigate("/");
+    if (userId != null){
+        
+        logout();
+        navigate("/");
+    }
+    else{
+      navigate("/");
+    }
   }
 
  

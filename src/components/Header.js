@@ -2,6 +2,7 @@ import React from "react"
 import troll from "../images/troll-face.png"
 import "../header.css"
 import {useLocation, useNavigate} from 'react-router-dom'
+import {Button} from '@nextui-org/react'
 
 export default function Header() {
     const location = useLocation()
@@ -14,7 +15,11 @@ export default function Header() {
             return <div className="font-sans lg:text-xl text-sm">No user ID found</div>;
         }
     
-        return <div className="font-sans lg:text-xl text-sm">User ID: {userId}</div>;
+        return(
+        <div className="flex flex-row gap-20 items-baseline">
+            <h3 className="font-sans lg:text-xl text-sm">User ID: {userId}</h3>
+            
+        </div>);
     };
 
     
