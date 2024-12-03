@@ -12,22 +12,30 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure
+  useDisclosure,
 } from "@nextui-org/react";
 import { MdDelete } from "react-icons/md";
-import {Image} from "@nextui-org/react"
+import { Image } from "@nextui-org/react";
+import { useAuthContext } from "../hooks/useAuthContext.js";
 
 export default function SavedMemes() {
+  const { user, dispatch } = useAuthContext()
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const navigate = useNavigate();
   function Back() {
-    navigate("/home", { state: { id: userId, currentmeme: meme  } });
+    navigate("/home", { state: { id: userId, currentmeme: meme } });
   }
 
   const Delete = async (objectKey) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/saved/${objectKey}`
+        `http://localhost:5000/saved/${objectKey}`,
+        {
+          headers: {
+            //add authorization header with the token
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
       );
       // Handle successful deletion (e.g., refresh UI)
       console.log(response.data);
@@ -35,6 +43,9 @@ export default function SavedMemes() {
 
       return response.data;
     } catch (error) {
+      if (error.response.status === 401) {
+        alert("Authentication failed. Please log in again.");
+      }
       console.error("Error deleting image:", error);
       // Handle error (e.g., show error message to user)
     }
@@ -48,23 +59,61 @@ export default function SavedMemes() {
 
   React.useEffect(() => {
     const fetchMemes = async () => {
-      try {
-        //accessing userEmail once again
-        const userEmail = userId;
-        const response = await axios.get(
-          `http://localhost:5000/saved?email=${userEmail}`
-        );
-        setMemes(response.data.memes);
-        console.log(response.data);
-      } catch (error) {
-        console.log("Error fetching saved memes:", error);
+      if (!user){
+        console.log("User not defined")
+        console.log(user)
+        alert("User must be logged in");
       }
+      else{
+        try {
+          //accessing userEmail once again
+          const userEmail = userId;
+          const response = await axios.get(
+            `http://localhost:5000/saved?email=${userEmail}`,
+            {
+              headers: {
+                //add authorization header with the token
+                Authorization: `Bearer ${user.token}`,
+              },
+            }
+          );
+          
+          setMemes(response.data.memes);
+          console.log(response.data);
+        } catch (error) {
+          // Most defensive error handling
+          console.error("Full error object:", error);
+  
+          // Check if error exists and has a response property
+          if (error && error.response && error.response.status) {
+            if (error.response.status === 401) {
+              alert("Authentication failed. Please log in again.");
+              // Optional: logout logic
+            } else {
+              console.error(
+                "Server responded with an error:",
+                error.response.data
+              );
+            }
+          } else if (error instanceof Error) {
+            // Handle network errors or other exceptions
+            console.error("Error details:", error.message);
+            alert("An error occurred. Please try again.");
+          } else {
+            // Fallback for any unexpected error format
+            console.error("Unknown error:", error);
+            alert("An unexpected error occurred.");
+          }
+        }
+
+      }
+      
     };
 
     fetchMemes();
   }, []);
 
-  console.log("URL for meme:", memes.url);
+  //console.log("URL for meme:", memes.url);
 
   const arrayReverseObj = (memes) => memes.slice().reverse();
   console.log(arrayReverseObj(memes));
@@ -101,7 +150,7 @@ export default function SavedMemes() {
                 className="overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div className="aspect-square relative bg-gray-100 h-full w-full">
-                <img
+                  <img
                     src={meme.url}
                     alt="Saved meme"
                     className="absolute inset-0 w-full h-full object-cover"

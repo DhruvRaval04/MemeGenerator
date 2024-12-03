@@ -4,11 +4,13 @@ const cors = require("cors");
 const bycrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const { requireAuth } = require('../middleware/Authenticatetoken');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 require("dotenv").config();
+
 
 //jsonwebtoken intialization 
 const createToken = (_id) =>{
@@ -106,7 +108,7 @@ const s3 = new AWS.S3();
 // Configure multer for handling multipart/form-data
 const upload = multer({ storage: multer.memoryStorage() });
 
-app.post("/home", upload.single("file"), async (req, res) => {
+app.post("/home", requireAuth,  upload.single("file"), async (req, res) => {
   console.log("Received request to /home");
   console.log("File:", req.file);
   console.log("User email:", req.body.email);
@@ -171,7 +173,7 @@ app.post("/home", upload.single("file"), async (req, res) => {
 
 //get request to see all the saved memes
 //must give email as part of request
-app.get("/saved", async (req, res) => {
+app.get("/saved", requireAuth, async (req, res) => {
   try {
     const userEmail = req.query.email;
     if (!userEmail) {
@@ -205,7 +207,7 @@ app.get("/saved", async (req, res) => {
 
 //delete saved memes
 //will recieve meme object in req
-app.delete("/saved/:objectKey", async (req, res) => {
+app.delete("/saved/:objectKey", requireAuth, async (req, res) => {
   const objectKey = req.params.objectKey;
 
   if (!objectKey) {
