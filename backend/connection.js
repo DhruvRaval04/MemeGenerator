@@ -4,7 +4,7 @@ const cors = require("cors");
 const bycrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const { requireAuth } = require('../middleware/Authenticatetoken');
+const { requireAuth } = require('./middleware/Authenticatetoken');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
