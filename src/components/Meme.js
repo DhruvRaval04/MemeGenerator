@@ -7,7 +7,7 @@ import { CiSaveDown1, CiSaveDown2 } from "react-icons/ci";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { FaSave } from "react-icons/fa";
 import Draggable from "react-draggable";
-import { useLogout } from "../Sign_In/Logout";
+import { useLogout } from "../Sign_In/Logout.js";
 import { useAuthContext } from "../hooks/useAuthContext.js";
 
 export default function Meme() {
@@ -19,9 +19,10 @@ export default function Meme() {
 
   const topTextRef = useRef(null);
   const bottomTextRef = useRef(null);
-  const nodeRef = useRef(null);
+  const canvasRef = useRef(null);
   const initialmeme = location.state?.currentmeme;
   var initialurl = "http://i.imgflip.com/1bij.jpg";
+  
   if (initialmeme != null) {
     initialurl = initialmeme.randomImage;
     //console.log("INITIAL", initialmeme);
@@ -31,8 +32,11 @@ export default function Meme() {
     topText: "",
     bottomText: "",
     randomImage: initialurl,
+    topTextMetrics: { width: 0, height: 0 },
+    bottomTextMetrics: { width: 0, height: 0 }
   });
   const [allMemes, setAllMemes] = React.useState([]);
+
 
   function SavedMemes() {
     if (!user) {
@@ -75,9 +79,12 @@ export default function Meme() {
   });
 
   const [imageWidth, setImageWidth] = useState(0);
+  const [imageHeight, setImageHeight] = useState(0);
+  const [currentimageHeight, setCurrentImageHeight] = useState(0);
+  const [dragged, setdragged] = useState(false);
 
   // Preload the image and compute initial x
-  /*useEffect(() => {
+  useEffect(() => {
     const image = new Image();
     image.crossOrigin = "anonymous";
     image.src = meme.randomImage;
@@ -85,12 +92,45 @@ export default function Meme() {
     image.onload = () => {
       const initialX = image.width / 2;
       setImageWidth(initialX); // Set initial width when image loads
+      setImageHeight(image.height);
       setTextPositions({
-        topText: { x: initialX, y: 0 }, // Example Y value for top text
-        bottomText: { x: initialX, y: 0 }, // Example Y value for bottom text
+        topText: { x: initialX, y: 32 }, // Example Y value for top text
+        bottomText: { x: initialX, y: image.height}, // Example Y value for bottom text
       });
+      
     };
-  }, [meme.randomImage]);
+  },[]);
+
+    // Preload the image and compute initial x
+    useEffect(() => {
+      const image = new Image();
+      image.crossOrigin = "anonymous";
+      image.src = meme.randomImage;
+  
+      image.onload = () => {
+        setCurrentImageHeight((image.height / image.width) * 600);
+      
+        
+      };
+    },[meme.randomImage]);
+
+  // Measure text metrics
+  const measureTextMetrics = (text) => {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.font = "32px Impact";
+    
+    const metrics = ctx.measureText(text.toUpperCase());
+    
+    // Estimate height (since measureText doesn't directly provide height)
+    const height = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
+    
+    return {
+      width: metrics.width,
+      height: height
+    };
+  };
+
   const handleDrag =
     (textType) =>
     (event, { x, y, lastX, lastY }) => {
@@ -101,15 +141,31 @@ export default function Meme() {
           y: prevPositions[textType].y + y - lastY,
         },
       }));
-    };*/
+      setdragged(true);
+      console.log("top x", textPositions.topText.x)
+      console.log("top y", textPositions.topText.y)
+      console.log("bottom x", textPositions.bottomText.x)
+      console.log("bottom y", textPositions.bottomText.y)
+    };
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setMeme((prevMeme) => ({
-      ...prevMeme,
-      [name]: value,
-    }));
+    setMeme((prevMeme) => {
+      // Calculate metrics based on which input changed
+      const newMetrics = name === 'topText' 
+        ? { topTextMetrics: measureTextMetrics(value) }
+        : { bottomTextMetrics: measureTextMetrics(value) };
+      
+      return {
+        ...prevMeme,
+        [name]: value,
+        ...newMetrics
+      };
+    });
   }
+  const eventLogger = (e, data) => {
+    localStorage.setItem('defaultPosition', { valueX: data.x, valueY: data.y });
+  };
 
   function saveMeme() {
     const canvas = document.createElement("canvas");
@@ -120,30 +176,45 @@ export default function Meme() {
     image.src = meme.randomImage;
 
     image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.drawImage(image, 0, 0);
-      ctx.font = "50px Impact";
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "black";
-      ctx.textAlign = "center";
+        let canvasWidth = 600; // Target width is always 600
+        let canvasHeight = (image.height / image.width) * 600; // Maintain aspect ratio
 
-      // Top text
-      ctx.fillText(meme.topText, canvas.width / 2, 50 );
-      ctx.strokeText(meme.topText,canvas.width/2, 50);
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        
+        // Draw the image
+        ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+        
+        ctx.font = "32px Impact";
+        ctx.fillStyle = "white";
+        ctx.strokeStyle = "black";
+        ctx.textAlign = "left";  // Changed to left alignment
+        const topmetrics = ctx.measureText(meme.topText.toUpperCase());
+        const bottommetrics = ctx.measureText(meme.bottomText.toUpperCase());
+        //if (dragged === true) {
+            
 
-      //console.log("Save function canvas width/2 is", canvas.width/2);
+            ctx.fillText(meme.topText.toUpperCase(), textPositions.topText.x - meme.topTextMetrics.width/2 + 12, textPositions.topText.y);
+            ctx.strokeText(meme.topText.toUpperCase(), textPositions.topText.x - meme.topTextMetrics.width/2 + 12, textPositions.topText.y);
 
-      // Bottom text
-      ctx.fillText(meme.bottomText, canvas.width / 2, canvas.height - 20);
-      ctx.strokeText(meme.bottomText, canvas.width / 2, canvas.height - 20);
+            ctx.fillText(meme.bottomText.toUpperCase(), textPositions.bottomText.x - meme.bottomTextMetrics.width/2 +12, textPositions.bottomText.y);
+            ctx.strokeText(meme.bottomText.toUpperCase(), textPositions.bottomText.x - meme.bottomTextMetrics.width/2 + 12, textPositions.bottomText.y);
+        /*} else {
+            // Default positioning when not dragged
+            ctx.textAlign = "center";
+            ctx.fillText(meme.topText, canvas.width/2, 50);
+            ctx.strokeText(meme.topText, canvas.width/2, 50);
+            ctx.fillText(meme.bottomText, canvas.width/2, canvas.height - 20);
+            ctx.strokeText(meme.bottomText, canvas.width/2, canvas.height - 20);
+        }*/
 
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = "meme.png";
-      link.click();
+        // Download the meme
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = "meme.png";
+        link.click();
     };
-  }
+}
 
   /*function imagesizing() {
     //finding the width and height of the current image and of image text
@@ -186,7 +257,7 @@ export default function Meme() {
       canvas.width = image.width;
       canvas.height = image.height;
       ctx.drawImage(image, 0, 0);
-      ctx.font = "50px Impact";
+      ctx.font = "32px Impact";
       ctx.fillStyle = "white";
       ctx.strokeStyle = "black";
       ctx.textAlign = "center";
@@ -297,24 +368,37 @@ export default function Meme() {
           Get a new meme image
         </button>
       </div>
-      <div className="meme">
-        
+      <div className="meme "  >
         <img src={meme.randomImage} className="meme--image" />
             <Draggable
               positionOffset={{x:'-50%', y:0}}
               nodeRef={topTextRef}
-              //onDrag={handleDrag("topText")}
+              onDrag={handleDrag("topText")}
+              bounds={{
+                left:(-300 + meme.topTextMetrics.width/2), 
+                right:(300 - meme.topTextMetrics.width/2),
+                top: (0),
+                bottom: (currentimageHeight - 32*2)
+              }}
               
             >
-              <h2 ref={topTextRef} className="meme--text top">
+              <h2 ref={topTextRef} className="meme--text ">
                 {meme.topText}
               </h2>
             </Draggable>
             <Draggable
-              positionOffset={{x:'-50%', y:0}}
+              positionOffset={{x:'-50%', y:imageHeight-32}}
               nodeRef={bottomTextRef}
+              onDrag={handleDrag("bottomText")}
+              bounds={{
+                left:(-300 + meme.bottomTextMetrics.width/2), 
+                right:(300 - meme.bottomTextMetrics.width/2),
+                top: (-imageHeight+32),
+                bottom: (currentimageHeight-imageHeight-32)
+              
+              }}
             >
-              <h2 ref={bottomTextRef} className="meme--text bottom">
+              <h2 ref={bottomTextRef} className="meme--text">
                 {meme.bottomText}
               </h2>
             </Draggable>
