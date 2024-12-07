@@ -23,7 +23,7 @@ export default function Login(){
 
         try{
             //sending POST 
-            await axios.post("http://localhost:5000/signup", { email, password})
+            await axios.post("http://meme-generator-green-six.vercel.app/signup", { email, password})
             //getting the server response 
             
             .then(res=>{
