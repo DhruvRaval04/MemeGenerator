@@ -1,5 +1,5 @@
 import React from "react"
-import troll from "../images/troll-face.png"
+import troll from "../../public/troll-face.png"
 import "../header.css"
 import {useLocation, useNavigate} from 'react-router-dom'
 import {Button} from '@nextui-org/react'

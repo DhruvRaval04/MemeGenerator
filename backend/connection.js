@@ -8,7 +8,12 @@ const { requireAuth } = require('./middleware/Authenticatetoken');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors(
+  {
+    origin: "https://your-frontend-domain.com", // Replace with your frontend's URL
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+  }
+));
 require("dotenv").config();
 
 
@@ -256,6 +261,5 @@ app.delete("/saved/:objectKey", requireAuth, async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("port connected");
-});
+module.exports = app;
+

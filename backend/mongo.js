@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-mongoose.connect("mongodb://localhost:27017/react-login")
+mongoose.connect(proccess.env.MONGODB_URI)
 .then(() => {
     console.log("mongodb connected");
 })
@@ -29,4 +29,3 @@ const collection = mongoose.model("collection", newSchema)
 
 module.exports = collection
 
-//mongodb+srv://dhruvraval04:llV5QvYvpsecJPiK@serverlessinstance0.indklss.mongodb.net/?retryWrites=true&w=majority&appName=ServerlessInstance0
