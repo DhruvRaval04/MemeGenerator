@@ -303,8 +303,9 @@ export default function Meme() {
               //add authorization header with the token
               Authorization: `Bearer ${user.token}`,
             },
-          }, 
-          {withCredentials: true}
+            withCredentials: true,
+          } 
+        
         );
 
         if (response.data.message === "success") {
