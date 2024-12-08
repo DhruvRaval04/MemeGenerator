@@ -24,7 +24,9 @@ const createToken = (_id) =>{
 //connectng frontend to backend (writing the API)
 
 //for login page
-app.get("/", cors(), (req, res) => {});
+app.get("/", cors(), (req, res) => {
+  res.json("Server is running" );
+});
 
 //get data from login page (for POST) - checks if POST request's (if user exists or not)
 app.post("/", async (req, res) => {
