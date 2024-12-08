@@ -21,7 +21,7 @@ export default function Meme() {
   const bottomTextRef = useRef(null);
   const canvasRef = useRef(null);
   const initialmeme = location.state?.currentmeme;
-  var initialurl = "http://i.imgflip.com/1bij.jpg";
+  var initialurl = "https://i.imgflip.com/1bij.jpg";
   
   if (initialmeme != null) {
     initialurl = initialmeme.randomImage;
@@ -295,7 +295,7 @@ export default function Meme() {
         formData.append("email", userEmail);
 
         const response = await axios.post(
-          "http://localhost:5000/home",
+          "https://gagcanvas.vercel.app/home",
           formData,
           {
             headers: {
