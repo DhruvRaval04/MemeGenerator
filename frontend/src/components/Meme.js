@@ -12,7 +12,7 @@ import { useAuthContext } from "../hooks/useAuthContext.js";
 
 export default function Meme() {
   const navigate = useNavigate();
-
+  axios.defaults.withCredentials = true;
   const location = useLocation();
   const userId = location.state?.id;
   const { user } = useAuthContext();
@@ -303,7 +303,8 @@ export default function Meme() {
               //add authorization header with the token
               Authorization: `Bearer ${user.token}`,
             },
-          }
+          }, 
+          {withCredentials: true}
         );
 
         if (response.data.message === "success") {
