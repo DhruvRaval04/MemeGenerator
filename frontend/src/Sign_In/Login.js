@@ -21,7 +21,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://meme-generator-green-six.vercel.app/", {
+      const response = await axios.post("https://meme-generator-green-six.vercel.app/", {
         email,
         password,
       });
