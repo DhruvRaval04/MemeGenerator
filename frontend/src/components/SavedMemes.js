@@ -29,7 +29,7 @@ export default function SavedMemes() {
   const Delete = async (objectKey) => {
     try {
       const response = await axios.delete(
-        `http://meme-generator-green-six.vercel.app/
+        `https://meme-generator-green-six.vercel.app/
 saved/${objectKey}`,
         {
           headers: {
