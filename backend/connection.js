@@ -12,6 +12,8 @@ app.use(cors(
   {
     origin: "https://gagcanvas.vercel.app", 
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
   }
 ));
 require("dotenv").config();
