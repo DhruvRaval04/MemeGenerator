@@ -163,11 +163,8 @@ export default function Meme() {
       };
     });
   }
-  const eventLogger = (e, data) => {
-    localStorage.setItem('defaultPosition', { valueX: data.x, valueY: data.y });
-  };
 
-  function saveMeme() {
+  function createMemeCanvas(onCanvasCreated) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     const image = new Image();
@@ -188,97 +185,45 @@ export default function Meme() {
         ctx.font = "32px Impact";
         ctx.fillStyle = "white";
         ctx.strokeStyle = "black";
-        ctx.textAlign = "left";  // Changed to left alignment
-        const topmetrics = ctx.measureText(meme.topText.toUpperCase());
-        const bottommetrics = ctx.measureText(meme.bottomText.toUpperCase());
-        //if (dragged === true) {
-            
+        ctx.textAlign = "left";  // Left alignment
 
-            ctx.fillText(meme.topText.toUpperCase(), textPositions.topText.x - meme.topTextMetrics.width/2 + 12, textPositions.topText.y);
-            ctx.strokeText(meme.topText.toUpperCase(), textPositions.topText.x - meme.topTextMetrics.width/2 + 12, textPositions.topText.y);
+        // Draw top text
+        ctx.fillText(meme.topText.toUpperCase(), textPositions.topText.x - meme.topTextMetrics.width/2 + 12, textPositions.topText.y);
+        ctx.strokeText(meme.topText.toUpperCase(), textPositions.topText.x - meme.topTextMetrics.width/2 + 12, textPositions.topText.y);
 
-            ctx.fillText(meme.bottomText.toUpperCase(), textPositions.bottomText.x - meme.bottomTextMetrics.width/2 +12, textPositions.bottomText.y);
-            ctx.strokeText(meme.bottomText.toUpperCase(), textPositions.bottomText.x - meme.bottomTextMetrics.width/2 + 12, textPositions.bottomText.y);
-        /*} else {
-            // Default positioning when not dragged
-            ctx.textAlign = "center";
-            ctx.fillText(meme.topText, canvas.width/2, 50);
-            ctx.strokeText(meme.topText, canvas.width/2, 50);
-            ctx.fillText(meme.bottomText, canvas.width/2, canvas.height - 20);
-            ctx.strokeText(meme.bottomText, canvas.width/2, canvas.height - 20);
-        }*/
+        // Draw bottom text
+        ctx.fillText(meme.bottomText.toUpperCase(), textPositions.bottomText.x - meme.bottomTextMetrics.width/2 +12, textPositions.bottomText.y);
+        ctx.strokeText(meme.bottomText.toUpperCase(), textPositions.bottomText.x - meme.bottomTextMetrics.width/2 + 12, textPositions.bottomText.y);
 
-        // Download the meme
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = "meme.png";
-        link.click();
+        // Call the callback with the created canvas
+        onCanvasCreated(canvas);
+    };
+
+    image.onerror = () => {
+        console.error("Error loading image");
     };
 }
 
-  /*function imagesizing() {
-    //finding the width and height of the current image and of image text
 
-    //setting up the canvas
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const image = new Image();
+function saveMeme() {
+  createMemeCanvas((canvas) => {
+      // Download the meme
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "meme.png";
+      link.click();
+  });
+}
 
-    image.crossOrigin = "anonymous";
-    image.src = meme.randomImage;
-
-    let final = 0;
-
-    image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.font = "50px Impact";
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "black";
-      ctx.textAlign = "center";
-      final = image.width;
-      console.log(final / 2);
-      return final / 2;
-    };
-  }*/
-
-  function saveMemetocloud() {
-    //make canvas into png file
-
-    //setting up the canvas
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const image = new Image();
-
-    image.crossOrigin = "anonymous";
-    image.src = meme.randomImage;
-
-    image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.drawImage(image, 0, 0);
-      ctx.font = "32px Impact";
-      ctx.fillStyle = "white";
-      ctx.strokeStyle = "black";
-      ctx.textAlign = "center";
-
-      // Top text
-      ctx.fillText(meme.topText, canvas.width/2, 50 );
-      ctx.strokeText(meme.topText,canvas.width/2, 50);
-
-      //console.log("Save function canvas width/2 is", canvas.width/2);
-
-      // Bottom text
-      ctx.fillText(meme.bottomText, canvas.width / 2, canvas.height - 20);
-      ctx.strokeText(meme.bottomText, canvas.width / 2, canvas.height - 20);
-
-      //converting image to base64
+function saveMemetocloud() {
+  createMemeCanvas((canvas) => {
+      // Convert image to base64
       const base64Image = canvas.toDataURL("image/png");
 
-      //send post request to AWS server
+      // Send post request to AWS server
       uploadmeme(base64Image, userId);
-    };
-  }
+  });
+}
 
   async function uploadmeme(png, userEmail) {
     console.log(user.token);
