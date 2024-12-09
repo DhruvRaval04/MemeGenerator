@@ -265,9 +265,6 @@ app.delete("/saved/:objectKey", requireAuth, async (req, res) => {
   }
 });
 
-module.exports = (req, res) => {
-  // Handle the request using the Express app
-  app(req, res);
-};
+module.exports = app;
 
 
