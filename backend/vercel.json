@@ -1,16 +1,13 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "connection.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/home",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "connection.js"
-    }
-  ]
-}
+    "version": 2,
+    "builds": [
+      {
+        "src": "connection.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "connection.js" }
+    ]
+  }
+  
