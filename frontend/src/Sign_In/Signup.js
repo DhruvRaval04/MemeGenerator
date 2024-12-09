@@ -23,7 +23,7 @@ export default function Login(){
 
         try{
             //sending POST 
-            await axios.post(process.env.ENV_BACKEND_URL + "/signup", { email, password})
+            await axios.post("https://memegenerator-9lfb.onrender.com/signup", { email, password})
             //getting the server response 
             
             .then(res=>{

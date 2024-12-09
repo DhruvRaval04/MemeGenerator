@@ -29,7 +29,7 @@ export default function SavedMemes() {
   const Delete = async (objectKey) => {
     try {
       const response = await axios.delete(
-        process.env.ENV_BACKEND_URL+ `/saved/${objectKey}`,
+        `https://memegenerator-9lfb.onrender.com/saved/${objectKey}`,
         {
           headers: {
             //add authorization header with the token
@@ -69,7 +69,7 @@ export default function SavedMemes() {
           //accessing userEmail once again
           const userEmail = userId;
           const response = await axios.get(
-            process.env.ENV_BACKEND_URL + `/saved?email=${userEmail}`,
+            `https://memegenerator-9lfb.onrender.com/saved?email=${userEmail}`,
             {
               headers: {
                 //add authorization header with the token
