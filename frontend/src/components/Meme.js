@@ -295,7 +295,7 @@ export default function Meme() {
         formData.append("email", userEmail);
 
         const response = await axios.post(
-          "https://gagcanvas.vercel.app/home",
+          process.env.ENV_BACKEND_URL + "/home",
           formData,
           {
             headers: {

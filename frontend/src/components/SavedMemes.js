@@ -29,8 +29,7 @@ export default function SavedMemes() {
   const Delete = async (objectKey) => {
     try {
       const response = await axios.delete(
-        `https://meme-generator-green-six.vercel.app/
-saved/${objectKey}`,
+        process.env.ENV_BACKEND_URL+ `/saved/${objectKey}`,
         {
           headers: {
             //add authorization header with the token
@@ -70,7 +69,7 @@ saved/${objectKey}`,
           //accessing userEmail once again
           const userEmail = userId;
           const response = await axios.get(
-            `https://meme-generator-green-six.vercel.app//saved?email=${userEmail}`,
+            process.env.ENV_BACKEND_URL + `/saved?email=${userEmail}`,
             {
               headers: {
                 //add authorization header with the token

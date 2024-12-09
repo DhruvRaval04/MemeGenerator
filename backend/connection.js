@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(
   {
-    origin: "https://gagcanvas.vercel.app", 
+    origin: ENV_FRONTEND_URL, 
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
