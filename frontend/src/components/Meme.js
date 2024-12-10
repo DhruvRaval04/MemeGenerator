@@ -374,13 +374,13 @@ function saveMemetocloud() {
           Save Meme to Account
         </Button>
       </div>
-      <div className="flex flex-row gap-10 items-end">
+      <div className="flex flex-row gap-10 items-end relative pb-10">
         <Button
           color="primary"
           startContent={<TiArrowBackOutline />}
           radius="full"
           onClick={backtolandingpage}
-          className="save-button hover:bg-danger"
+          className="save-button hover:bg-danger py-4 px-6"
           disableAnimation={true}
           size="md"
         >
@@ -391,7 +391,7 @@ function saveMemetocloud() {
           endContent={<FaSave />}
           radius="full"
           onClick={SavedMemes}
-          className="save-button hover:bg-success "
+          className="save-button hover:bg-success py-4 px-6"
           disableAnimation={true}
           size="md"
         >
