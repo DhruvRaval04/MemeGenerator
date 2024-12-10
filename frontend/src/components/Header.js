@@ -33,7 +33,7 @@ export default function Header() {
         
         {/* Middle - Title */}
         <div className="flex justify-center lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2 lg:w-full">
-            <h2 className="font-mono lg:text-7xl md:text-5xl text-xl">Meme Generator</h2>
+            <h2 className="font-mono lg:text-7xl md:text-5xl text-xl">GagCanvas</h2>
         </div>
         
         {/* Right side - Greeting */}
