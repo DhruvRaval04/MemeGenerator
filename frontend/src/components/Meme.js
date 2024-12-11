@@ -216,13 +216,22 @@ function saveMeme() {
 }
 
 function saveMemetocloud() {
-  createMemeCanvas((canvas) => {
+  if (!user) {
+    console.log("User not defined");
+    console.log(user);
+    alert("User must be logged in");
+  }
+  else{
+    createMemeCanvas((canvas) => {
       // Convert image to base64
       const base64Image = canvas.toDataURL("image/png");
 
       // Send post request to AWS server
       uploadmeme(base64Image, userId);
   });
+
+  }
+  
 }
 
   async function uploadmeme(png, userEmail) {
