@@ -3,6 +3,7 @@ import axios from "axios"
 import {useNavigate, Link} from "react-router-dom"
 import {Button} from "@nextui-org/react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import LoadingBanner from "../components/LoadingBanner";
 
 export default function Login(){
     
@@ -63,6 +64,7 @@ export default function Login(){
 
     return(
         <div className="flex flex-col items-center">
+          <LoadingBanner />
         <div class="w-full max-w-sm pt-20">
           <form
             class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
