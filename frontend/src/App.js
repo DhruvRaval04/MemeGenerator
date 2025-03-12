@@ -7,6 +7,7 @@ import Signup from "./Sign_In/Signup"
 import SavedMemes from "./components/SavedMemes"
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import { useLogout } from "./Sign_In/Logout.js";
+import { Analytics } from "@vercel/analytics/react"
 
 export default function App() {
     const { logout } = useLogout();
@@ -29,6 +30,7 @@ export default function App() {
     return (
         <div className="App">
             <NextUIProvider>
+                <Analytics/>
                 <Router>
                     <Header />
                     <Routes>
